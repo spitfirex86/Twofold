@@ -1,0 +1,3 @@
+LIBRARY Twofold
+EXPORTS
+	DetourFinishHelperProcess	@1
