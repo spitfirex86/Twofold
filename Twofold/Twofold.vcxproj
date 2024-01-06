@@ -93,11 +93,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="loader.c" />
+    <ClCompile Include="log.c" />
     <ClCompile Include="main.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h" />
     <ClInclude Include="loader.h" />
+    <ClInclude Include="log.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
