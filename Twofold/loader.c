@@ -5,7 +5,7 @@
 
 #define LDR_C_InitProc "ModMain"
 
-typedef int (*InitProc)( BOOL bInit, void *pData );
+typedef int (*InitProc)( BOOL bInit, void *reserved );
 
 typedef struct DllInfo
 {
@@ -102,8 +102,11 @@ BOOL LDR_LoadOneDll( DllInfo *pDll )
 	return TRUE;
 }
 
-BOOL LDR_UnloadOneDll( DllInfo *pDll )
+BOOL LDR_UnLoadOneDll( DllInfo *pDll )
 {
+	if ( !pDll->hDll )
+		return FALSE;
+
 	if ( !FreeLibrary(pDll->hDll) )
 	{
 		pDll->dwLastError = GetLastError();
@@ -127,6 +130,17 @@ void LDR_LoadAllDlls( void )
 	LOG_Info("Loaded %d (out of %d) mods", LDR_gNbLoaded, LDR_gNbMods);
 }
 
+void LDR_UnLoadAllDlls( void )
+{
+	long lNbUnLoaded = 0;
+	for ( int i = 0; i < LDR_gNbMods; ++i )
+	{
+		if ( LDR_UnLoadOneDll(LDR_gModList + i) )
+			++lNbUnLoaded;
+	}
+	LOG_Info("Unloaded %d (out of %d) mods", lNbUnLoaded, LDR_gNbMods);
+}
+
 BOOL LDR_InitOneDll( DllInfo *pDll )
 {
 	if ( !pDll->pInitProc )
@@ -145,9 +159,9 @@ BOOL LDR_InitOneDll( DllInfo *pDll )
 	return TRUE;
 }
 
-BOOL LDR_DeinitOneDll( DllInfo *pDll )
+BOOL LDR_DesInitOneDll( DllInfo *pDll )
 {
-	if ( !pDll->pInitProc )
+	if ( !pDll->pInitProc || pDll->lResult != 0 )
 		return FALSE;
 
 	int lResult = pDll->pInitProc(FALSE, NULL);
@@ -171,4 +185,16 @@ void LDR_InitAllDlls( void )
 			++LDR_gNbInitialized;
 	}
 	LOG_Info("Initialized %d (out of %d) mods", LDR_gNbInitialized, LDR_gNbMods);
+}
+
+void LDR_DesInitAllDlls( void )
+{
+	long lNbDesInit = 0;
+
+	for ( int i = 0; i < LDR_gNbMods; ++i )
+	{
+		if ( LDR_DesInitOneDll(LDR_gModList + i) )
+			++lNbDesInit;
+	}
+	LOG_Info("Deinitialized %d (out of %d) mods", lNbDesInit, LDR_gNbMods);
 }

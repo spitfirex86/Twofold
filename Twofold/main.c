@@ -1,29 +1,50 @@
 #include "framework.h"
+#include "main.h"
 #include "loader.h"
 #include "log.h"
 
 
-//long (CALLBACK *GAM_fn_WndProc)( HANDLE hWnd, unsigned int uMsg, unsigned int wParam, long lParam ) = (void*)0x4022D0;
-//int (*R2_CreateGameWindow)( HINSTANCE hInstance, int nShowCmd ) = (void *)0x402020;
-void (*R2_fn_vInitEngineWhenInitApplication)( void ) = (void *)0x401000;
+BOOL g_bAllInit = FALSE;
 
 
 void InitHook( void )
 {
+	LOG_OpenFile(".\\TwofoldLog.log");
 	LOG_Info("Welcome to Twofold(tm)!");
 
+	LOG_Info("Attaching hooks...");
+	HK_OnInit();
+
 	LOG_Info("Calling fn_vInitEngineWhenInitApplication()...");
-	R2_fn_vInitEngineWhenInitApplication();
+	GAM_fn_vInitEngineWhenInitApplication();
 
 	LOG_Info("Loading and initializing mods...");
 	LDR_ReadLoadOrder(".\\Mods");
 	LDR_LoadAllDlls();
 	LDR_InitAllDlls();
 
-	LOG_Info("InitHook finished, handing over control to the game...");
+	LOG_Info("InitHook finished, handing over control to the game.");
+	LOG_Info("- - -");
+	g_bAllInit = TRUE;
 }
 
-/* TODO: deinitialization of mods */
+void DesInitHook( void )
+{
+	if ( !g_bAllInit )
+		return;
+
+	LOG_Info("Deinitializing mods...");
+	LDR_DesInitAllDlls();
+	LDR_UnLoadAllDlls();
+
+	LOG_Info("Detaching hooks...");
+	HK_OnDesInit();
+
+	LOG_Info("The game is shutting down. Goodbye!");
+	LOG_CloseFile();
+	g_bAllInit = FALSE;
+}
+
 
 BOOL APIENTRY DllMain( HMODULE hModule, DWORD dwReason, LPVOID lpReserved )
 {
@@ -35,21 +56,18 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD dwReason, LPVOID lpReserved )
 		case DLL_PROCESS_ATTACH:
 			DetourRestoreAfterWith();
 
-			LOG_OpenFile(".\\TwofoldLog.log");
+			char szModuleName[MAX_PATH];
+			GetModuleFileName(GetModuleHandle(NULL), szModuleName, MAX_PATH);
+			char *pBaseName = strrchr(szModuleName, '\\');
 
-			DetourTransactionBegin();
-			DetourUpdateThread(GetCurrentThread());
-			DetourAttach((PVOID *)&R2_fn_vInitEngineWhenInitApplication, (PVOID)InitHook);
-			DetourTransactionCommit();
+			if ( !_stricmp(pBaseName, "Rayman2.exe") )
+				return FALSE; /* fail the load if not R2 */
+
+			HK_OnDllAttach();
 			break;
 
 		case DLL_PROCESS_DETACH:
-			LOG_CloseFile();
-
-			DetourTransactionBegin();
-			DetourUpdateThread(GetCurrentThread());
-			DetourDetach((PVOID *)&R2_fn_vInitEngineWhenInitApplication, (PVOID)InitHook);
-			DetourTransactionCommit();
+			HK_OnDllDetach();
 			break;
 
 		case DLL_THREAD_ATTACH:

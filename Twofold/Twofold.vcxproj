@@ -59,14 +59,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;TWOFOLD_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)detours</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)detours;$(acplib)\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>$(SolutionDir)detours</AdditionalLibraryDirectories>
-      <AdditionalDependencies>detours.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)detours;$(acplib)\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>detours.lib;ACP_Ray2.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
@@ -78,7 +78,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;TWOFOLD_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)detours</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)detours;$(acplib)\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -86,12 +86,13 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>$(SolutionDir)detours</AdditionalLibraryDirectories>
-      <AdditionalDependencies>detours.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)detours;$(acplib)\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>detours.lib;ACP_Ray2.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="hooks.c" />
     <ClCompile Include="loader.c" />
     <ClCompile Include="log.c" />
     <ClCompile Include="main.c" />
@@ -100,6 +101,7 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="loader.h" />
     <ClInclude Include="log.h" />
+    <ClInclude Include="main.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />

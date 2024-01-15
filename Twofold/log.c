@@ -1,4 +1,5 @@
 #include "framework.h"
+#include "log.h"
 
 
 FILE * LOG_hFile = NULL;
