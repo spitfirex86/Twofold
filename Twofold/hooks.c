@@ -6,7 +6,7 @@
 char g_szVersionTxt[] = "/o200:Twofold v1.0";
 
 JFFTXT_tdstString g_stVersionTxt = {
-	&g_szVersionTxt,
+	(char *)&g_szVersionTxt,
 	5.0f, 980.0f, 7.0f, 160
 };
 
@@ -19,6 +19,16 @@ void fn_vChooseTheGoodDesInit( void )
 		DesInitHook();
 
 	GAM_fn_vChooseTheGoodDesInit();
+}
+
+void fn_vInitGameLoop( void )
+{
+	HWND hWnd = GAM_fn_hGetWindowHandle();
+	HICON hIcon = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(1));
+	SendMessage(hWnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
+	SendMessage(hWnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
+
+	GAM_fn_vInitGameLoop();
 }
 
 void fn_vInitLevelLoop( void )
@@ -43,6 +53,7 @@ void HK_OnInit( void )
 	DetourUpdateThread(GetCurrentThread());
 
 	DetourAttach((PVOID *)&GAM_fn_vChooseTheGoodDesInit, (PVOID)fn_vChooseTheGoodDesInit);
+	DetourAttach((PVOID *)&GAM_fn_vInitGameLoop, (PVOID)fn_vInitGameLoop);
 	DetourAttach((PVOID *)&GAM_fn_vInitLevelLoop, (PVOID)fn_vInitLevelLoop);
 	DetourAttach((PVOID *)&JFFTXT_vAffiche, (PVOID)fn_vAffiche);
 
@@ -55,6 +66,7 @@ void HK_OnDesInit( void )
 	DetourUpdateThread(GetCurrentThread());
 
 	DetourDetach((PVOID *)&GAM_fn_vChooseTheGoodDesInit, (PVOID)fn_vChooseTheGoodDesInit);
+	DetourDetach((PVOID *)&GAM_fn_vInitGameLoop, (PVOID)fn_vInitGameLoop);
 	DetourDetach((PVOID *)&GAM_fn_vInitLevelLoop, (PVOID)fn_vInitLevelLoop);
 	DetourDetach((PVOID *)&JFFTXT_vAffiche, (PVOID)fn_vAffiche);
 
