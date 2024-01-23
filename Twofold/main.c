@@ -7,6 +7,29 @@
 BOOL g_bAllInit = FALSE;
 
 
+void ParseCommandLine( char const *szCmdLine )
+{
+	char const *szCurrent;
+	if ( szCurrent = strstr(szCmdLine, "-d") )
+	{
+		MessageBox(NULL, "If you want to debug, attach the debugger now.", "Twofold", MB_OK | MB_ICONINFORMATION);
+	}
+	if ( szCurrent = strstr(szCmdLine, "-level:") )
+	{
+		char szLevel[30];
+		if ( sscanf(szCurrent+7, "%29s", szLevel) > 0 )
+		{
+			GAM_fn_vSetFirstLevelName(szLevel);
+			*GAM_g_cIsLevelOk = 1;
+			LOG_Info("Set first level to '%s'", szLevel);
+		}
+	}
+	if ( szCurrent = strstr(szCmdLine, "-v") )
+	{
+		LOG_SetVerbose(TRUE);
+	}
+}
+
 void InitHook( void )
 {
 	LOG_OpenFile(".\\TwofoldLog.log");
@@ -17,6 +40,8 @@ void InitHook( void )
 
 	LOG_Info("Calling fn_vInitEngineWhenInitApplication()...");
 	GAM_fn_vInitEngineWhenInitApplication();
+
+	ParseCommandLine(GAM_g_szCmdLine);
 
 	LOG_Info("Loading and initializing mods...");
 	LDR_ReadLoadOrder(".\\Mods");

@@ -1,5 +1,6 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+#include <stdlib.h>
 #include <detours.h>
 #include <stdio.h>
 
@@ -14,8 +15,20 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 	PROCESS_INFORMATION pi = { 0 };
 	si.cb = sizeof(si);
 
+	unsigned int ulCmdLineLen = strlen(lpCmdLine);
+	char *szCmdLine = NULL;
+
+	if ( ulCmdLineLen > 0 )
+	{
+		szCmdLine = malloc(ulCmdLineLen + sizeof(C_Ray2Exe) + 2);
+		if ( !szCmdLine )
+			return 1;
+
+		sprintf(szCmdLine, "%s %s", C_Ray2Exe, lpCmdLine);
+	}
+
 	BOOL bResult = DetourCreateProcessWithDllEx(
-		NULL, C_Ray2Exe,
+		C_Ray2Exe, szCmdLine,
 		NULL, NULL,
 		FALSE, 0,
 		NULL, NULL,
@@ -35,5 +48,6 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 
 	CloseHandle(pi.hProcess);
 	CloseHandle(pi.hThread);
+	free(szCmdLine);
 	return 0;
 }

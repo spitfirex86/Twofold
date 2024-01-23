@@ -3,6 +3,7 @@
 
 
 FILE * LOG_hFile = NULL;
+BOOL LOG_bVerbose = FALSE;
 
 
 void LOG_OpenFile( char *szFilePath )
@@ -41,6 +42,12 @@ void LOG_PrintFmt( char const *szFmt, ... )
 	va_end(args);
 }
 
+void LOG_Void()
+{
+}
+
+void (*LOG_InfoVerbose)( char const *szFmt, ... ) = LOG_Void;
+
 void LOG_Info( char const *szFmt, ... )
 {
 	va_list args;
@@ -63,4 +70,10 @@ void LOG_Error( char const *szFmt, ... )
 	va_start(args, szFmt);
 	LOG_PrintHF("\n[ERROR] --> ", "\n\n", szFmt, args);
 	va_end(args);
+}
+
+void LOG_SetVerbose( BOOL bVerbose )
+{
+	LOG_bVerbose = bVerbose;
+	LOG_InfoVerbose = ((bVerbose) ? LOG_Info : LOG_Void);
 }

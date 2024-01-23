@@ -8,3 +8,6 @@ void LOG_PrintFmt( char const *szFmt, ... );
 void LOG_Info( char const *szFmt, ... );
 void LOG_Warn( char const *szFmt, ... );
 void LOG_Error( char const *szFmt, ... );
+
+extern void (*LOG_InfoVerbose)( char const *szFmt, ... );
+void LOG_SetVerbose( BOOL bVerbose );
