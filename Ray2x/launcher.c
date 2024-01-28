@@ -1,8 +1,5 @@
-#define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
-#include <stdlib.h>
-#include <detours.h>
-#include <stdio.h>
+#include "framework.h"
+#include "extra.h"
 
 
 #define C_Ray2Exe "Rayman2.exe"
@@ -25,6 +22,12 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 			return 1;
 
 		sprintf(szCmdLine, "%s %s", C_Ray2Exe, lpCmdLine);
+	}
+
+	if ( !PreLaunch() && !strstr(lpCmdLine, "-ignoreproblems") )
+	{
+		free(szCmdLine);
+		return 1;
 	}
 
 	BOOL bResult = DetourCreateProcessWithDllEx(

@@ -86,9 +86,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="extra.c" />
     <ClCompile Include="launcher.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="extra.h" />
+    <ClInclude Include="framework.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>

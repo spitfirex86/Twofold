@@ -18,9 +18,18 @@
     <ClCompile Include="launcher.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="extra.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="extra.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
