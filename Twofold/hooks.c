@@ -16,7 +16,7 @@ BOOL g_bInMainMenu = FALSE;
 void fn_vChooseTheGoodDesInit( void )
 {
 	if ( GAM_g_stEngineStructure->eEngineMode == E_EM_ModeStoppingProgram )
-		DesInitHook();
+		fn_vDesInitHook();
 
 	GAM_fn_vChooseTheGoodDesInit();
 }
@@ -32,7 +32,7 @@ void fn_vInitGameLoop( void )
 	GAM_fn_vInitGameLoop();
 }
 
-void NeutralizePTC_SuperObj( HIE_tdstSuperObject *hSuperObj )
+void fn_vNeutralizePTC_SuperObj( HIE_tdstSuperObject *hSuperObj )
 {
 	HIE_tdstStandardGame *pStdGame = HIE_M_hSuperObjectGetStdGame(hSuperObj);
 	pStdGame->ulCustomBits |= Std_C_CustBit_NoAI;
@@ -45,7 +45,7 @@ void NeutralizePTC_SuperObj( HIE_tdstSuperObject *hSuperObj )
 	pStdGame->eInitFlagWhenOutOfZone = Std_C_OI_NeverBackWhenTaken;
 }
 
-void NeutralizePTC( void )
+void fn_vNeutralizePTC( void )
 {
 	HIE_tdxObjectType lType1 = HIE_fn_lFindModelTypeByName("DS1_GEN_PTC_GenCKS");
 	HIE_tdxObjectType lType2 = HIE_fn_lFindModelTypeByName("DS1_GEN_PTC_GenBigFile");
@@ -61,7 +61,7 @@ void NeutralizePTC( void )
 			&& ( HIE_M_hSuperObjectGetStdGame(hSuperObj)->lObjectModelType == lType1
 				|| HIE_M_hSuperObjectGetStdGame(hSuperObj)->lObjectModelType == lType2 ) )
 		{
-			NeutralizePTC_SuperObj(hSuperObj);
+			fn_vNeutralizePTC_SuperObj(hSuperObj);
 			LOG_InfoVerbose("PTC : Found and neutralized '%s' (%p)", HIE_fn_szGetObjectPersonalName(hSuperObj), hSuperObj);
 		}
 	}
@@ -71,7 +71,7 @@ void NeutralizePTC( void )
 			&& ( HIE_M_hSuperObjectGetStdGame(hSuperObj)->lObjectModelType == lType1
 				|| HIE_M_hSuperObjectGetStdGame(hSuperObj)->lObjectModelType == lType2 ) )
 		{
-			NeutralizePTC_SuperObj(hSuperObj);
+			fn_vNeutralizePTC_SuperObj(hSuperObj);
 			LOG_InfoVerbose("PTC : Found and neutralized '%s' (%p) (inactive)", HIE_fn_szGetObjectPersonalName(hSuperObj), hSuperObj);
 		}
 	}
@@ -85,7 +85,7 @@ void fn_vInitLevelLoop( void )
 
 	GAM_fn_vInitLevelLoop();
 
-	NeutralizePTC();
+	fn_vNeutralizePTC();
 }
 
 void fn_vAffiche( void *pContext )
@@ -97,7 +97,7 @@ void fn_vAffiche( void *pContext )
 }
 
 
-void HK_OnInit( void )
+void HK_fn_vOnInit( void )
 {
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
@@ -110,7 +110,7 @@ void HK_OnInit( void )
 	DetourTransactionCommit();
 }
 
-void HK_OnDesInit( void )
+void HK_fn_vOnDesInit( void )
 {
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
@@ -124,19 +124,19 @@ void HK_OnDesInit( void )
 }
 
 
-void HK_OnDllAttach( void )
+void HK_fn_vOnDllAttach( void )
 {
 	/* early hook init */
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
-	DetourAttach((PVOID *)&GAM_fn_vInitEngineWhenInitApplication, (PVOID)InitHook);
+	DetourAttach((PVOID *)&GAM_fn_vInitEngineWhenInitApplication, (PVOID)fn_vInitHook);
 	DetourTransactionCommit();
 }
 
-void HK_OnDllDetach( void )
+void HK_fn_vOnDllDetach( void )
 {
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
-	DetourDetach((PVOID *)&GAM_fn_vInitEngineWhenInitApplication, (PVOID)InitHook);
+	DetourDetach((PVOID *)&GAM_fn_vInitEngineWhenInitApplication, (PVOID)fn_vInitHook);
 	DetourTransactionCommit();
 }

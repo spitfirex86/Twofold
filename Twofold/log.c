@@ -6,13 +6,13 @@ FILE * LOG_hFile = NULL;
 BOOL LOG_bVerbose = FALSE;
 
 
-void LOG_OpenFile( char *szFilePath )
+void LOG_fn_vOpenFile( char *szFilePath )
 {
 	FILE *hFile = fopen(szFilePath, "w");
 	LOG_hFile = hFile;
 }
 
-void LOG_CloseFile( void )
+void LOG_fn_vCloseFile( void )
 {
 	fclose(LOG_hFile);
 }
@@ -72,7 +72,7 @@ void LOG_Error( char const *szFmt, ... )
 	va_end(args);
 }
 
-void LOG_SetVerbose( BOOL bVerbose )
+void LOG_fn_vSetVerbose( BOOL bVerbose )
 {
 	LOG_bVerbose = bVerbose;
 	LOG_InfoVerbose = ((bVerbose) ? LOG_Info : LOG_Void);

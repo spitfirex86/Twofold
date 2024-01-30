@@ -18,39 +18,39 @@ typedef struct DllInfo
 DllInfo;
 
 
-char LDR_gModDir[MAX_PATH] = { 0 };
+char LDR_g_szModDir[MAX_PATH] = { 0 };
 
-DllInfo *LDR_gModList = NULL;
-long LDR_gNbMods = 0;
-long LDR_gNbLoaded = 0;
-long LDR_gNbInitialized = 0;
+DllInfo *LDR_g_dModList = NULL;
+long LDR_g_lNbMods = 0;
+long LDR_g_lNbLoaded = 0;
+long LDR_g_lNbInitialized = 0;
 
 
-DllInfo * LDR_AllocInfo( void )
+DllInfo * LDR_fn_p_stAllocInfo( void )
 {
-	size_t newSize = (LDR_gNbMods + 1) * sizeof(DllInfo);
-	DllInfo *pNewList = realloc(LDR_gModList, newSize);
+	size_t newSize = (LDR_g_lNbMods + 1) * sizeof(DllInfo);
+	DllInfo *pNewList = realloc(LDR_g_dModList, newSize);
 
 	if ( !pNewList )
 		return NULL; /* TODO: this should probably exit the whole process */
 
-	LDR_gModList = pNewList;
-	long idx = LDR_gNbMods++;
+	LDR_g_dModList = pNewList;
+	long idx = LDR_g_lNbMods++;
 
 	DllInfo *pInfo = pNewList + idx;
 	*pInfo = (DllInfo){ 0 };
 	return pInfo;
 }
 
-BOOL LDR_ReadLoadOrder( char const *szModDir )
+BOOL LDR_fn_bReadLoadOrder( char const *szModDir )
 {
-	strcpy(LDR_gModDir, szModDir);
-	CreateDirectory(LDR_gModDir, NULL);
+	strcpy(LDR_g_szModDir, szModDir);
+	CreateDirectory(LDR_g_szModDir, NULL);
 
 	/* TODO: actual load order */
 
 	char szSearchPath[MAX_PATH];
-	sprintf(szSearchPath, "%s\\%s", LDR_gModDir, "*.dll");
+	sprintf(szSearchPath, "%s\\%s", LDR_g_szModDir, "*.dll");
 
 	WIN32_FIND_DATA ffd = { 0 };
 	HANDLE hFind = FindFirstFile(szSearchPath, &ffd);
@@ -58,25 +58,25 @@ BOOL LDR_ReadLoadOrder( char const *szModDir )
 	{
 		do
 		{
-			DllInfo *pDll = LDR_AllocInfo();
-			sprintf(pDll->szDllPath, "%s\\%s", LDR_gModDir, ffd.cFileName);
+			DllInfo *pDll = LDR_fn_p_stAllocInfo();
+			sprintf(pDll->szDllPath, "%s\\%s", LDR_g_szModDir, ffd.cFileName);
 		}
 		while ( FindNextFile(hFind, &ffd) );
 		FindClose(hFind);
 	}
 
-	LOG_Info("Found %d DLLs in '%s'", LDR_gNbMods, LDR_gModDir);
+	LOG_Info("Found %d DLLs in '%s'", LDR_g_lNbMods, LDR_g_szModDir);
 	return TRUE;
 }
 
-void LDR_FreeLoadOrder( void )
+void LDR_fn_vFreeLoadOrder( void )
 {
-	free(LDR_gModList);
-	LDR_gModList = NULL;
-	LDR_gNbMods = 0;
+	free(LDR_g_dModList);
+	LDR_g_dModList = NULL;
+	LDR_g_lNbMods = 0;
 }
 
-BOOL LDR_LoadOneDll( DllInfo *pDll )
+BOOL LDR_fn_bLoadOneDll( DllInfo *pDll )
 {
 	HMODULE hDll = LoadLibrary(pDll->szDllPath);
 	pDll->hDll = hDll;
@@ -102,7 +102,7 @@ BOOL LDR_LoadOneDll( DllInfo *pDll )
 	return TRUE;
 }
 
-BOOL LDR_UnLoadOneDll( DllInfo *pDll )
+BOOL LDR_fn_bUnLoadOneDll( DllInfo *pDll )
 {
 	if ( !pDll->hDll )
 		return FALSE;
@@ -120,28 +120,28 @@ BOOL LDR_UnLoadOneDll( DllInfo *pDll )
 	return TRUE;
 }
 
-void LDR_LoadAllDlls( void )
+void LDR_fn_vLoadAllDlls( void )
 {
-	for ( int i = 0; i < LDR_gNbMods; ++i )
+	for ( int i = 0; i < LDR_g_lNbMods; ++i )
 	{
-		if ( LDR_LoadOneDll(LDR_gModList + i) )
-			++LDR_gNbLoaded;
+		if ( LDR_fn_bLoadOneDll(LDR_g_dModList + i) )
+			++LDR_g_lNbLoaded;
 	}
-	LOG_Info("Loaded %d (out of %d) mods", LDR_gNbLoaded, LDR_gNbMods);
+	LOG_Info("Loaded %d (out of %d) mods", LDR_g_lNbLoaded, LDR_g_lNbMods);
 }
 
-void LDR_UnLoadAllDlls( void )
+void LDR_fn_vUnLoadAllDlls( void )
 {
 	long lNbUnLoaded = 0;
-	for ( int i = 0; i < LDR_gNbMods; ++i )
+	for ( int i = 0; i < LDR_g_lNbMods; ++i )
 	{
-		if ( LDR_UnLoadOneDll(LDR_gModList + i) )
+		if ( LDR_fn_bUnLoadOneDll(LDR_g_dModList + i) )
 			++lNbUnLoaded;
 	}
-	LOG_Info("Unloaded %d (out of %d) mods", lNbUnLoaded, LDR_gNbMods);
+	LOG_Info("Unloaded %d (out of %d) mods", lNbUnLoaded, LDR_g_lNbMods);
 }
 
-BOOL LDR_InitOneDll( DllInfo *pDll )
+BOOL LDR_fn_bInitOneDll( DllInfo *pDll )
 {
 	if ( !pDll->pInitProc )
 		return FALSE;
@@ -159,7 +159,7 @@ BOOL LDR_InitOneDll( DllInfo *pDll )
 	return TRUE;
 }
 
-BOOL LDR_DesInitOneDll( DllInfo *pDll )
+BOOL LDR_fn_bDesInitOneDll( DllInfo *pDll )
 {
 	if ( !pDll->pInitProc || pDll->lResult != 0 )
 		return FALSE;
@@ -177,24 +177,24 @@ BOOL LDR_DesInitOneDll( DllInfo *pDll )
 	return TRUE;
 }
 
-void LDR_InitAllDlls( void )
+void LDR_fn_vInitAllDlls( void )
 {
-	for ( int i = 0; i < LDR_gNbMods; ++i )
+	for ( int i = 0; i < LDR_g_lNbMods; ++i )
 	{
-		if ( LDR_InitOneDll(LDR_gModList + i) )
-			++LDR_gNbInitialized;
+		if ( LDR_fn_bInitOneDll(LDR_g_dModList + i) )
+			++LDR_g_lNbInitialized;
 	}
-	LOG_Info("Initialized %d (out of %d) mods", LDR_gNbInitialized, LDR_gNbMods);
+	LOG_Info("Initialized %d (out of %d) mods", LDR_g_lNbInitialized, LDR_g_lNbMods);
 }
 
-void LDR_DesInitAllDlls( void )
+void LDR_fn_vDesInitAllDlls( void )
 {
 	long lNbDesInit = 0;
 
-	for ( int i = 0; i < LDR_gNbMods; ++i )
+	for ( int i = 0; i < LDR_g_lNbMods; ++i )
 	{
-		if ( LDR_DesInitOneDll(LDR_gModList + i) )
+		if ( LDR_fn_bDesInitOneDll(LDR_g_dModList + i) )
 			++lNbDesInit;
 	}
-	LOG_Info("Deinitialized %d (out of %d) mods", lNbDesInit, LDR_gNbMods);
+	LOG_Info("Deinitialized %d (out of %d) mods", lNbDesInit, LDR_g_lNbMods);
 }

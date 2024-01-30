@@ -7,7 +7,7 @@
 BOOL g_bAllInit = FALSE;
 
 
-void ParseCommandLine( char const *szCmdLine )
+void fn_vParseCommandLine( char const *szCmdLine )
 {
 	char const *szCurrent;
 	if ( szCurrent = strstr(szCmdLine, "-d") )
@@ -26,47 +26,50 @@ void ParseCommandLine( char const *szCmdLine )
 	}
 	if ( szCurrent = strstr(szCmdLine, "-v") )
 	{
-		LOG_SetVerbose(TRUE);
+		LOG_fn_vSetVerbose(TRUE);
 	}
 }
 
-void InitHook( void )
+void fn_vInitHook( void )
 {
-	LOG_OpenFile(".\\TwofoldLog.log");
+	LOG_fn_vOpenFile(".\\TwofoldLog.log");
 	LOG_Info("Welcome to Twofold(tm)!");
 
 	LOG_Info("Attaching hooks...");
-	HK_OnInit();
+	HK_fn_vOnInit();
 
 	LOG_Info("Calling fn_vInitEngineWhenInitApplication()...");
 	GAM_fn_vInitEngineWhenInitApplication();
 
-	ParseCommandLine(GAM_g_szCmdLine);
+	fn_vParseCommandLine(GAM_g_szCmdLine);
 
 	LOG_Info("Loading and initializing mods...");
-	LDR_ReadLoadOrder(".\\Mods");
-	LDR_LoadAllDlls();
-	LDR_InitAllDlls();
+	LDR_fn_bReadLoadOrder(".\\Mods");
+	LDR_fn_vLoadAllDlls();
+	LDR_fn_vInitAllDlls();
 
 	LOG_Info("InitHook finished, handing over control to the game.");
 	LOG_Info("- - -");
 	g_bAllInit = TRUE;
 }
 
-void DesInitHook( void )
+void fn_vDesInitHook( void )
 {
 	if ( !g_bAllInit )
 		return;
 
 	LOG_Info("Deinitializing mods...");
-	LDR_DesInitAllDlls();
-	LDR_UnLoadAllDlls();
+	LDR_fn_vDesInitAllDlls();
+	LDR_fn_vUnLoadAllDlls();
 
 	LOG_Info("Detaching hooks...");
-	HK_OnDesInit();
+	HK_fn_vOnDesInit();
+
+	LOG_Info("Cleaning up...");
+	LDR_fn_vFreeLoadOrder();
 
 	LOG_Info("The game is shutting down. Goodbye!");
-	LOG_CloseFile();
+	LOG_fn_vCloseFile();
 	g_bAllInit = FALSE;
 }
 
@@ -88,11 +91,11 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD dwReason, LPVOID lpReserved )
 			if ( !_stricmp(pBaseName, "Rayman2.exe") )
 				return FALSE; /* fail the load if not R2 */
 
-			HK_OnDllAttach();
+			HK_fn_vOnDllAttach();
 			break;
 
 		case DLL_PROCESS_DETACH:
-			HK_OnDllDetach();
+			HK_fn_vOnDllDetach();
 			break;
 
 		case DLL_THREAD_ATTACH:
