@@ -4,6 +4,9 @@
 #include "log.h"
 
 
+TwofoldHeader const g_stHeaderConst = { 'R2X', 1, 0 };
+TwofoldHeader *g_p_stHeaderInMem = OFFSET(0x4C0000);
+
 BOOL g_bAllInit = FALSE;
 
 
@@ -90,6 +93,11 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD dwReason, LPVOID lpReserved )
 
 			if ( !_stricmp(pBaseName, "Rayman2.exe") )
 				return FALSE; /* fail the load if not R2 */
+
+			if ( g_p_stHeaderInMem->ulHeader == g_stHeaderConst.ulHeader )
+				return FALSE; /* fail if already loaded */
+
+			*g_p_stHeaderInMem = g_stHeaderConst; /* write header */
 
 			HK_fn_vOnDllAttach();
 			break;

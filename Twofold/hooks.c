@@ -29,6 +29,8 @@ void fn_vInitGameLoop( void )
 	SendMessage(hWnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
 	LOG_InfoVerbose("fn_vInitGameLoop : applied icon patch");
 
+	sprintf(g_szVersionTxt, "/o200:Twofold:v%u.%u", g_stHeaderConst.ucVersionA, g_stHeaderConst.ucVersionB);
+
 	GAM_fn_vInitGameLoop();
 }
 
