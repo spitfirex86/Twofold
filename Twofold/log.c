@@ -6,7 +6,7 @@ FILE * LOG_hFile = NULL;
 BOOL LOG_bVerbose = FALSE;
 
 
-void LOG_fn_vOpenFile( char *szFilePath )
+void LOG_fn_vOpenFile( char const *szFilePath )
 {
 	FILE *hFile = fopen(szFilePath, "w");
 	LOG_hFile = hFile;
@@ -70,6 +70,11 @@ void LOG_Error( char const *szFmt, ... )
 	va_start(args, szFmt);
 	LOG_PrintHF("\n[ERROR] --> ", "\n\n", szFmt, args);
 	va_end(args);
+}
+
+int LOG_MessageBox( char const *szErr, UINT uType )
+{
+	return MessageBox(NULL, szErr, "Twofold Error", uType);
 }
 
 void LOG_fn_vSetVerbose( BOOL bVerbose )

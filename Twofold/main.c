@@ -9,6 +9,10 @@ TwofoldHeader *g_p_stHeaderInMem = OFFSET(0x4C0000);
 
 BOOL g_bAllInit = FALSE;
 
+BOOL g_bSetLevel = FALSE;
+char g_szLevel[30];
+char g_szCmdLine[512];
+
 
 void fn_vParseCommandLine( char const *szCmdLine )
 {
@@ -19,13 +23,8 @@ void fn_vParseCommandLine( char const *szCmdLine )
 	}
 	if ( szCurrent = strstr(szCmdLine, "-level:") )
 	{
-		char szLevel[30];
-		if ( sscanf(szCurrent+7, "%29s", szLevel) > 0 )
-		{
-			GAM_fn_vSetFirstLevelName(szLevel);
-			*GAM_g_cIsLevelOk = 1;
-			LOG_Info("Set first level to '%s'", szLevel);
-		}
+		if ( sscanf(szCurrent+7, "%29s", g_szLevel) > 0 )
+			g_bSetLevel = TRUE;
 	}
 	if ( szCurrent = strstr(szCmdLine, "-v") )
 	{
@@ -33,21 +32,48 @@ void fn_vParseCommandLine( char const *szCmdLine )
 	}
 }
 
+void fn_vInitAfterInitEngine( void )
+{
+	if ( g_bSetLevel )
+	{
+		GAM_fn_vSetFirstLevelName(g_szLevel);
+		*GAM_g_cIsLevelOk = 1;
+		LOG_Info("Set first level to '%s'", g_szLevel);
+	}
+}
+
+void fn_vPrepareReadConfig( void )
+{
+	if ( !CFG_fn_bDoesFileExist(g_szCfgFile) )
+	{
+		LOG_Warn("Configuration file missing - writing default config to '%s'", g_szCfgFile);
+		CFG_fn_vWriteDefaultConfig();
+	}
+
+	CFG_fn_vReadConfig();
+
+	sprintf(g_szCmdLine, "%.255s %.255s", CFG_g_szDefaultCmdLine, GAM_g_szCmdLine);
+	fn_vParseCommandLine(g_szCmdLine);
+
+	LDR_fn_bReadLoadOrder();
+}
+
 void fn_vInitHook( void )
 {
-	LOG_fn_vOpenFile(".\\TwofoldLog.log");
+	LOG_fn_vOpenFile(g_szLogFile);
 	LOG_Info("Welcome to Twofold(tm)!");
+
+	LOG_Info("Reading configuration...");
+	fn_vPrepareReadConfig();
 
 	LOG_Info("Attaching hooks...");
 	HK_fn_vOnInit();
 
 	LOG_Info("Calling fn_vInitEngineWhenInitApplication()...");
 	GAM_fn_vInitEngineWhenInitApplication();
-
-	fn_vParseCommandLine(GAM_g_szCmdLine);
+	fn_vInitAfterInitEngine();
 
 	LOG_Info("Loading and initializing mods...");
-	LDR_fn_bReadLoadOrder(".\\Mods");
 	LDR_fn_vLoadAllDlls();
 	LDR_fn_vInitAllDlls();
 

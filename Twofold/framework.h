@@ -5,6 +5,7 @@
 #include <detours.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 
 #define ACP_NOX
 #include <ACP_Ray2.h>

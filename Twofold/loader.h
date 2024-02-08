@@ -6,7 +6,7 @@ extern long LDR_g_lNbLoaded;
 extern long LDR_g_lNbInitialized;
 
 
-BOOL LDR_fn_bReadLoadOrder( char const *szModDir );
+BOOL LDR_fn_bReadLoadOrder( void );
 void LDR_fn_vFreeLoadOrder( void );
 
 void LDR_fn_vLoadAllDlls( void );

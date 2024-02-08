@@ -3,7 +3,7 @@
 #include "log.h"
 
 
-char g_szVersionTxt[] = "/o200:Twofold v1.0";
+char g_szVersionTxt[32] = "/o200:Twofold<tm>";
 
 JFFTXT_tdstString g_stVersionTxt = {
 	(char *)&g_szVersionTxt,
@@ -27,7 +27,7 @@ void fn_vInitGameLoop( void )
 	HICON hIcon = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(1));
 	SendMessage(hWnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
 	SendMessage(hWnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
-	LOG_InfoVerbose("fn_vInitGameLoop : applied icon patch");
+	LOG_InfoVerbose(__FUNCTION__" : applied icon patch");
 
 	sprintf(g_szVersionTxt, "/o200:Twofold:v%u.%u", g_stHeaderConst.ucVersionA, g_stHeaderConst.ucVersionB);
 
@@ -51,7 +51,7 @@ void fn_vNeutralizePTC( void )
 {
 	HIE_tdxObjectType lType1 = HIE_fn_lFindModelTypeByName("DS1_GEN_PTC_GenCKS");
 	HIE_tdxObjectType lType2 = HIE_fn_lFindModelTypeByName("DS1_GEN_PTC_GenBigFile");
-	LOG_InfoVerbose("PTC : model types: DS1_GEN_PTC_GenCKS = %d, DS1_GEN_PTC_GenBigFile = %d", lType1, lType2);
+	LOG_InfoVerbose(__FUNCTION__" : model types: DS1_GEN_PTC_GenCKS = %d, DS1_GEN_PTC_GenBigFile = %d", lType1, lType2);
 
 	if ( lType1 == Std_C_InvalidObjectType || lType2 == Std_C_InvalidObjectType )
 		return;
@@ -64,7 +64,7 @@ void fn_vNeutralizePTC( void )
 				|| HIE_M_hSuperObjectGetStdGame(hSuperObj)->lObjectModelType == lType2 ) )
 		{
 			fn_vNeutralizePTC_SuperObj(hSuperObj);
-			LOG_InfoVerbose("PTC : Found and neutralized '%s' (%p)", HIE_fn_szGetObjectPersonalName(hSuperObj), hSuperObj);
+			LOG_InfoVerbose(__FUNCTION__" : Found and neutralized '%s' (%p)", HIE_fn_szGetObjectPersonalName(hSuperObj), hSuperObj);
 		}
 	}
 	LST_M_DynamicForEach(*GAM_g_p_stInactiveDynamicWorld, hSuperObj)
@@ -74,7 +74,7 @@ void fn_vNeutralizePTC( void )
 				|| HIE_M_hSuperObjectGetStdGame(hSuperObj)->lObjectModelType == lType2 ) )
 		{
 			fn_vNeutralizePTC_SuperObj(hSuperObj);
-			LOG_InfoVerbose("PTC : Found and neutralized '%s' (%p) (inactive)", HIE_fn_szGetObjectPersonalName(hSuperObj), hSuperObj);
+			LOG_InfoVerbose(__FUNCTION__" : Found and neutralized '%s' (%p) (inactive)", HIE_fn_szGetObjectPersonalName(hSuperObj), hSuperObj);
 		}
 	}
 }
@@ -83,7 +83,7 @@ void fn_vInitLevelLoop( void )
 {
 	char const *szLevelName = GAM_fn_p_szGetLevelName();
 	g_bInMainMenu = !_stricmp(szLevelName, "menu");
-	LOG_InfoVerbose("fn_vInitLevelLoop : current level is '%s'", szLevelName);
+	LOG_InfoVerbose(__FUNCTION__" : current level is '%s'", szLevelName);
 
 	GAM_fn_vInitLevelLoop();
 

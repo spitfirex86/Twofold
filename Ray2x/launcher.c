@@ -24,7 +24,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 		sprintf(szCmdLine, "%s %s", C_Ray2Exe, lpCmdLine);
 	}
 
-	if ( !PreLaunch() && !strstr(lpCmdLine, "-ignoreproblems") )
+	if ( !PreLaunch() && !strstr(lpCmdLine, "-ignore") )
 	{
 		free(szCmdLine);
 		return 1;

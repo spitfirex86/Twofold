@@ -92,6 +92,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="config.c" />
     <ClCompile Include="hooks.c" />
     <ClCompile Include="loader.c" />
     <ClCompile Include="log.c" />
