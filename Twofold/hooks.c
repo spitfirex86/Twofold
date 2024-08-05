@@ -36,7 +36,7 @@ void fn_vInitGameLoop( void )
 
 void fn_vNeutralizePTC_SuperObj( HIE_tdstSuperObject *hSuperObj )
 {
-	HIE_tdstStandardGame *pStdGame = HIE_M_hSuperObjectGetStdGame(hSuperObj);
+	GAM_tdstStandardGame *pStdGame = HIE_M_hSuperObjectGetStdGame(hSuperObj);
 	pStdGame->ulCustomBits |= Std_C_CustBit_NoAI;
 	pStdGame->ulSaveCustomBits |= Std_C_CustBit_NoAI;
 	pStdGame->ucMiscFlags |= Std_C_MiscFlag_DesactivateAtAll;
@@ -49,11 +49,11 @@ void fn_vNeutralizePTC_SuperObj( HIE_tdstSuperObject *hSuperObj )
 
 void fn_vNeutralizePTC( void )
 {
-	HIE_tdxObjectType lType1 = HIE_fn_lFindModelTypeByName("DS1_GEN_PTC_GenCKS");
-	HIE_tdxObjectType lType2 = HIE_fn_lFindModelTypeByName("DS1_GEN_PTC_GenBigFile");
+	GAM_tdxObjectType lType1 = HIE_fn_lFindModelTypeByName("DS1_GEN_PTC_GenCKS");
+	GAM_tdxObjectType lType2 = HIE_fn_lFindModelTypeByName("DS1_GEN_PTC_GenBigFile");
 	LOG_InfoVerbose(__FUNCTION__" : model types: DS1_GEN_PTC_GenCKS = %d, DS1_GEN_PTC_GenBigFile = %d", lType1, lType2);
 
-	if ( lType1 == Std_C_InvalidObjectType || lType2 == Std_C_InvalidObjectType )
+	if ( lType1 == GAM_C_InvalidObjectType || lType2 == GAM_C_InvalidObjectType )
 		return;
 
 	HIE_tdstSuperObject *hSuperObj;

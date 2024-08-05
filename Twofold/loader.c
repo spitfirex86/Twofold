@@ -277,7 +277,7 @@ BOOL LDR_fn_bLoadOneDll( tdstDllInfo *pDll )
 	{
 		pDll->dwLastError = GetLastError();
 		LOG_Warn(
-			"%s export missing in '%s', probably a legacy mod or helper library? (0x%08x)",
+			"%s export missing in '%s', possibly a legacy mod or helper library? (0x%08x)",
 			LDR_C_InitProc, M_szGetDllName(pDll), pDll->dwLastError
 		);
 	}

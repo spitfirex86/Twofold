@@ -78,7 +78,7 @@ BOOL PreLaunch( void )
 				szMsg2 = "Multiple copies of the library were found, delete 'Mods\\ACP_Ray2x.dll' and relaunch Twofold.";
 				break;
 			case 2:
-				szMsg2 = "Delete 'ACP_Ray2x.dll' located in the Rayman 2 directory and replace it with the copy found in 'Mods\\ACP_Ray2x.dll'.";
+				szMsg2 = "Delete 'ACP_Ray2x.dll' located in the Rayman 2 directory and replace it with the copy found at 'Mods\\ACP_Ray2x.dll'.";
 				break;
 			case 1:
 				szMsg2 = "Move 'Mods\\ACP_Ray2x.dll' into the main Rayman 2 directory and relaunch Twofold.";
