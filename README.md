@@ -22,6 +22,7 @@ New features include:
 ### Installation
 - Download the **[latest release zip](https://github.com/spitfirex86/Twofold/releases/latest)**.
 - Extract to the Rayman 2 installation directory.
+- Run `Ray2x.exe` once to generate all configuration files.
 
 ### Usage
 **To launch the game with mods:** run `Ray2x.exe`.  
