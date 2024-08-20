@@ -15,6 +15,10 @@ New features include:
 - Uplay/Ubisoft Connect is not officially supported, but might work - try at your own risk.
 - Retail CD/DVD versions **will not work**.
 
+### Requirements
+- [Visual C++ 2022 Redistributable](https://aka.ms/vs/17/release/vc_redist.x86.exe)
+- [Ray2Fix](https://github.com/spitfirex86/Ray2Fix) - optional, but recommended
+
 ### Installation
 - Download the **[latest release zip](https://github.com/spitfirex86/Twofold/releases/latest)**.
 - Extract to the Rayman 2 installation directory.
