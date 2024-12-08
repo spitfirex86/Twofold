@@ -97,7 +97,7 @@ void fn_vReadLoadOrderFile( FILE *hFile )
 	char szBuffer[512];
 	char *pCh;
 	int lLine = 0;
-	unsigned int ulMaxFileName = MAX_PATH - strlen(g_szLoadOrderFile) - 2;
+	unsigned int ulMaxFileName = MAX_PATH - strlen(CFG_g_szModsDir) - 2;
 
 	while ( (pCh = fgets(szBuffer, sizeof(szBuffer), hFile)) != NULL )
 	{
@@ -319,7 +319,7 @@ void LDR_fn_vLoadAllDlls( void )
 void LDR_fn_vUnLoadAllDlls( void )
 {
 	long lNbUnLoaded = 0;
-	for ( int i = 0; i < LDR_g_lNbMods; ++i )
+	for ( int i = LDR_g_lNbMods-1; i >= 0; --i )
 	{
 		if ( LDR_fn_bUnLoadOneDll(LDR_g_dModsList + i) )
 			++lNbUnLoaded;
@@ -384,7 +384,7 @@ void LDR_fn_vDesInitAllDlls( void )
 {
 	long lNbDesInit = 0;
 
-	for ( int i = 0; i < LDR_g_lNbMods; ++i )
+	for ( int i = LDR_g_lNbMods-1; i >= 0; --i )
 	{
 		if ( LDR_fn_bDesInitOneDll(LDR_g_dModsList + i) )
 			++lNbDesInit;
